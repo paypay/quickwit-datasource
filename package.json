@@ -21,7 +21,7 @@
   "license": "AGPL-3.0",
   "devDependencies": {
     "@babel/core": "^7.21.4",
-    "@grafana/e2e": "^6.7.6",
+    "@grafana/e2e": "^11.0.7",
     "@grafana/e2e-selectors": "10.1.9",
     "@grafana/eslint-config": "^6.0.0",
     "@grafana/tsconfig": "^1.2.0-rc1",
