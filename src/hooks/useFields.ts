@@ -46,7 +46,7 @@ const toSelectableValue = ({ text }: MetricFindValue): SelectableValue<string> =
   value: text,
 });
 
-type MatchType = 'contains' | 'startsWith'
+type MatchType = 'contains' | 'containsCaseInsensitive' | 'startsWith'
 
 /**
  * Returns a function to query the configured datasource for autocomplete values for the specified aggregation type or data types.
@@ -73,7 +73,20 @@ export const useFields = (type: AggregationType | string[], matchType: MatchType
         if (q === undefined) {
           return true;
         }
-        return matchType === 'contains' ? text.includes(q) : text.startsWith(q)
+
+        switch (matchType) {
+          case 'contains':
+            return text.includes(q);
+
+          case 'containsCaseInsensitive':
+            return text.toLowerCase().includes(q.toLowerCase());
+
+          case 'startsWith':
+            return text.startsWith(q);
+
+          default:
+            return true;
+        }
       })
       .map(toSelectableValue);
   };
