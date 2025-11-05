@@ -52,6 +52,24 @@ export function addAddHocFilter(query: string, filter: AdHocVariableFilter): str
     case 'not exists':
       addHocFilter = `-${key}:*`;
       break;
+    case 'in':
+      addHocFilter = createAdhocFilterIn(key, value);
+      break;
+    case 'not in':
+      addHocFilter = `(NOT (${createAdhocFilterIn(key, value)}))`;
+      break;
   }
   return concatenate(query, addHocFilter);
+}
+
+function createAdhocFilterIn(key: string, value: string): string {
+  const values = value.split(' ');
+
+  // OR is faster than IN for smaller number of values
+  if (values.length < 10) {
+    const conditions = values.map(v => `${key}:${v}`);
+    return `(${conditions.join(' OR ')})`;
+  }
+
+  return `${key}:IN [${value}]`;
 }

@@ -130,10 +130,23 @@ export const FilterEditorRow = ({ value, onSubmit }: FilterEditorRowProps) => {
             }}
           />
         </div>
-        {!['exists', 'not exists'].includes(value.filter.operator) && (
+        {['=', '!=', 'term', 'not term'].includes(value.filter.operator) && (
           <Input
             ref={valueInputRef}
             placeholder="Value"
+            value={value.filter.value}
+            onChange={(e) => dispatch(changeFilterValue({ id: value.id, value: e.currentTarget.value }))}
+            onKeyUp={(e) => {
+              if (e.key === 'Enter') {
+                onSubmit();
+              }
+            }}
+          />
+        )}
+        {['in', 'not in'].includes(value.filter.operator) && (
+          <Input
+            ref={valueInputRef}
+            placeholder="Space-delimited values"
             value={value.filter.value}
             onChange={(e) => dispatch(changeFilterValue({ id: value.id, value: e.currentTarget.value }))}
             onKeyUp={(e) => {
