@@ -95,7 +95,7 @@ interface FilterEditorRowProps {
 
 export const FilterEditorRow = ({ value, onSubmit }: FilterEditorRowProps) => {
   const dispatch = useDispatch();
-  const getFields = useFields('filters', 'startsWith');
+  const getFields = useFields('filters', 'containsCaseInsensitive');
   const valueInputRef = useRef<HTMLInputElement>(null);
 
   return (
