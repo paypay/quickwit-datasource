@@ -394,7 +394,10 @@ export class BaseQuickwitDataSource
     if (!adhocFilters) {
       return query;
     }
-    let finalQuery = query;
+
+    // Surround the query with () to ensure that the filters are properly AND'd
+    let finalQuery = '(' + query + ')';
+
     adhocFilters.forEach((filter) => {
       finalQuery = addAddHocFilter(finalQuery, filter);
     });

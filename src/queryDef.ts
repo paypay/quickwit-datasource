@@ -44,6 +44,8 @@ export const filterOperations = [
   { label: 'not term', value: 'not term' },
   { label: 'exists', value: 'exists' },
   { label: 'not exists', value: 'not exists' },
+  { label: 'in', value: 'in' },
+  { label: 'not in', value: 'not in' },
 ];
 
 export function defaultFilter(id = newFilterId()): QueryFilter {
