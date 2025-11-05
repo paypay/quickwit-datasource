@@ -396,7 +396,10 @@ export class BaseQuickwitDataSource
     }
 
     // Surround the query with () to ensure that the filters are properly AND'd
-    let finalQuery = '(' + query + ')';
+    let finalQuery = query.trim();
+    if (finalQuery.length > 0) {
+      finalQuery = '(' + finalQuery + ')';
+    }
 
     adhocFilters.forEach((filter) => {
       finalQuery = addAddHocFilter(finalQuery, filter);
