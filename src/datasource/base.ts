@@ -402,7 +402,12 @@ export class BaseQuickwitDataSource
     }
 
     adhocFilters.forEach((filter) => {
-      finalQuery = addAddHocFilter(finalQuery, filter);
+      // Replace template variables in filter values
+      const interpolatedFilter = {
+        ...filter,
+        value: this.templateSrv.replace(filter.value),
+      };
+      finalQuery = addAddHocFilter(finalQuery, interpolatedFilter);
     });
 
     return finalQuery;
