@@ -5,7 +5,8 @@ import { AdHocVariableFilter } from '@grafana/data';
  * Adds a label:"value" expression to the query.
  */
 export function addAddHocFilter(query: string, filter: AdHocVariableFilter): string {
-  if (!filter.key || !filter.value) {
+  const hasValidValue = ['exists', 'not exists'].includes(filter.operator) || !!filter.value
+  if (!filter.key || !hasValidValue) {
     return query;
   }
 
@@ -39,6 +40,36 @@ export function addAddHocFilter(query: string, filter: AdHocVariableFilter): str
     case '<':
       addHocFilter = `${key}:<${value}`;
       break;
+    case 'term':
+      addHocFilter = `${key}:${value}`;
+      break;
+    case 'not term':
+      addHocFilter = `-${key}:${value}`;
+      break;
+    case 'exists':
+      addHocFilter = `${key}:*`;
+      break;
+    case 'not exists':
+      addHocFilter = `-${key}:*`;
+      break;
+    case 'in':
+      addHocFilter = createAdhocFilterIn(key, value);
+      break;
+    case 'not in':
+      addHocFilter = `(NOT (${createAdhocFilterIn(key, value)}))`;
+      break;
   }
   return concatenate(query, addHocFilter);
+}
+
+function createAdhocFilterIn(key: string, value: string): string {
+  const values = value.split(' ');
+
+  // OR is faster than IN for smaller number of values
+  if (values.length < 10) {
+    const conditions = values.map(v => `${key}:${v}`);
+    return `(${conditions.join(' OR ')})`;
+  }
+
+  return `${key}:IN [${value}]`;
 }
