@@ -251,6 +251,7 @@ func (ds *QuickwitDatasource) CallResource(ctx context.Context, req *backend.Cal
 	if err != nil {
 		return err
 	}
+	body = normalizeResourceErrorBody(response.StatusCode, body)
 
 	responseHeaders := map[string][]string{
 		"content-type": {"application/json"},
@@ -265,4 +266,20 @@ func (ds *QuickwitDatasource) CallResource(ctx context.Context, req *backend.Cal
 		Headers: responseHeaders,
 		Body:    body,
 	})
+}
+
+func normalizeResourceErrorBody(statusCode int, body []byte) []byte {
+	if statusCode >= http.StatusOK && statusCode < http.StatusMultipleChoices || json.Valid(body) {
+		return body
+	}
+
+	payload, err := json.Marshal(QuickwitCreationErrorPayload{
+		Message:    strings.TrimSpace(string(body)),
+		StatusCode: statusCode,
+	})
+	if err != nil {
+		return body
+	}
+
+	return payload
 }
